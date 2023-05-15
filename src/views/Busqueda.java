@@ -6,6 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import jdbc.controller.ReservasController;
+import jdbc.modelo.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -38,7 +42,10 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+	
+	
 
+	private ReservasController reservaController;
 	/**
 	 * Launch the application.
 	 */
@@ -59,6 +66,7 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
+		this.reservaController = new ReservasController();
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -101,6 +109,7 @@ public class Busqueda extends JFrame {
 		modelo.addColumn("Fecha Check Out");
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
+		tbReservas.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
@@ -226,6 +235,12 @@ public class Busqueda extends JFrame {
 		contentPane.add(btnbuscar);
 		
 		JLabel lblBuscar = new JLabel("BUSCAR");
+		lblBuscar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				LlenarTablaReservas();
+			}
+		});
 		lblBuscar.setBounds(0, 0, 122, 35);
 		btnbuscar.add(lblBuscar);
 		lblBuscar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -273,4 +288,23 @@ public class Busqueda extends JFrame {
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);
 }
+	    
+	    //video
+	    private List<Reserva> buscarReservas(){
+	    	return this.reservaController.buscar();
+	    }
+	    
+	    //video
+	    private void LlenarTablaReservas() {
+	    	List <Reserva> reserva = buscarReservas();
+	    	try {
+	    		for (Reserva reservas : reserva) {
+	    		modelo.addRow(new Object[] {reservas.getId(), reservas.getFechaE(),
+	    				reservas.getFechaS(), reservas.getValor(), reservas.getFormaPago()});
+	    		}
+	    	} catch (Exception e) {
+	    		throw e;
+	    	}
+	    	
+	    }
 }
